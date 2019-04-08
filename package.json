@@ -1,0 +1,53 @@
+{
+  "name": "@tim-smart/torrentsearch",
+  "description": "Search for torrents",
+  "version": "0.1.0",
+  "author": "Tim Smart @tim-smart",
+  "bin": {
+    "torrentsearch": "./bin/run"
+  },
+  "bugs": "https://github.com/tim-smart/torrentsearch/issues",
+  "dependencies": {
+    "@oclif/command": "^1.5.12",
+    "@oclif/config": "^1.12.12",
+    "@oclif/plugin-help": "^2.1.6",
+    "chalk": "^2.4.2",
+    "cli-ux": "^5.2.1",
+    "torrent-search-api": "^2.0.7",
+    "tslib": "^1.9.3"
+  },
+  "devDependencies": {
+    "@oclif/tslint": "^3.1.1",
+    "@types/node": "^10.14.4",
+    "@types/chalk": "^2.2.0",
+    "@types/torrent-search-api": "^2.0.0",
+    "prettier": "^1.16.4",
+    "ts-node": "^8.0.3",
+    "tslint": "^5.15.0",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.3.3333"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "files": [
+    "/bin",
+    "/lib"
+  ],
+  "homepage": "https://github.com/tim-smart/torrentsearch",
+  "keywords": [
+    "oclif"
+  ],
+  "license": "MIT",
+  "main": "lib/index.js",
+  "oclif": {
+    "bin": "torrentsearch"
+  },
+  "repository": "tim-smart/torrentsearch",
+  "scripts": {
+    "posttest": "tslint -p . -t stylish",
+    "prepack": "rm -rf lib && tsc -b",
+    "test": "echo NO TESTS"
+  },
+  "types": "lib/index.d.ts"
+}
