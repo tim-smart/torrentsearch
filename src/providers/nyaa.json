@@ -1,0 +1,24 @@
+{
+  "name": "Nyaa",
+  "baseUrl": "https://nyaa.si",
+  "searchUrl": "?f=0&c={cat}&q={query}",
+  "categories": {
+    "All": "0_0",
+    "Audio": "2_0",
+    "Video": "1_0"
+  },
+  "defaultCategory": "All",
+  "resultsPerPageCount": 75,
+  "itemsSelector": ".torrent-list > tbody > tr",
+  "itemSelectors": {
+    "title": "td:nth-child(2) > a:last-child@text | trim",
+    "time": "td:nth-child(5)@text | trim",
+    "seeds": "td:nth-child(6) | int",
+    "peers": "td:nth-child(7) | int",
+    "size": "td:nth-child(4) | trim",
+    "magnet": "td:nth-child(3) > a:last-child@href",
+    "desc": "td:nth-child(2) > a:nth-child(2)@href"
+  },
+  "paginateSelector": "ul.pagination > li.next > a@href",
+  "torrentDetailsSelector": "#torrent-description@text"
+}

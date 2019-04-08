@@ -2,7 +2,15 @@
 import { Command, flags } from "@oclif/command";
 import chalk from "chalk";
 import cli from "cli-ux";
-import { enablePublicProviders, search, Torrent } from "torrent-search-api";
+import { join } from "path";
+import {
+  enablePublicProviders,
+  loadProviders,
+  search,
+  Torrent,
+} from "torrent-search-api";
+
+loadProviders(join(__dirname, "./providers"));
 
 class Torrentsearch extends Command {
   public static description = "search for torrents";
@@ -33,11 +41,9 @@ class Torrentsearch extends Command {
       parsedFlags.category,
       parsedFlags.limit!,
     );
-    torrents
-      .filter(t => !!t.magnet)
-      .forEach(torrent => {
-        this.logTorrent(torrent);
-      });
+    torrents.forEach(torrent => {
+      this.logTorrent(torrent);
+    });
   }
 
   private logTorrent(torrent: Torrent) {
@@ -47,7 +53,11 @@ class Torrentsearch extends Command {
         `${chalk.bold.green("S:")} ${torrent.seeds} - ` +
         `${chalk.bold.green("P:")} ${torrent.peers} - `,
     );
-    cli.url("magnet", torrent.magnet);
+    if (torrent.magnet) {
+      cli.url("magnet", torrent.magnet);
+    } else {
+      cli.url("link", torrent.desc);
+    }
   }
 }
 
