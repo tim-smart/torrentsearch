@@ -49,7 +49,7 @@ class Torrentsearch extends Command {
       /*empty*/
     }
 
-    // enablePublicProviders();
+    enablePublicProviders();
 
     Object.keys(config).forEach(provider => {
       enableProvider(
@@ -80,13 +80,13 @@ class Torrentsearch extends Command {
     if (torrent.magnet) {
       cli.url("magnet", torrent.magnet);
     } else if (torrent.link) {
-      cli.url("link", torrent.link);
+      cli.url("torrent dl", torrent.link);
     } else {
       const magnet = await getMagnet(torrent);
       if (magnet) {
         cli.url("magnet", magnet);
       } else {
-        cli.url("link", torrent.desc);
+        cli.url("details", torrent.desc);
       }
     }
   }
