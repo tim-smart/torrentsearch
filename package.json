@@ -1,7 +1,7 @@
 {
   "name": "@tim-smart/torrentsearch",
   "description": "Search for torrents",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "author": "Tim Smart @tim-smart",
   "bin": {
     "torrentsearch": "./bin/run"
@@ -49,7 +49,7 @@
   "repository": "tim-smart/torrentsearch",
   "scripts": {
     "posttest": "tslint -p . -t stylish",
-    "prepack": "rm -rf lib && tsc -b",
+    "prepack": "rm -rf lib && tsc -b && cp -r src/providers lib/",
     "test": "echo NO TESTS"
   },
   "types": "lib/index.d.ts"
