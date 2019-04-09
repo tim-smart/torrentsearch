@@ -1,12 +1,12 @@
 ///<reference path="torrent-search-api.d.ts"/>
 import { Command, flags } from "@oclif/command";
-import { IConfig } from "@oclif/config";
 import chalk from "chalk";
 import cli from "cli-ux";
 import * as fs from "fs-extra";
 import { join } from "path";
 import * as path from "path";
 import {
+  disableProvider,
   enableProvider,
   enablePublicProviders,
   getMagnet,
@@ -16,6 +16,8 @@ import {
 } from "torrent-search-api";
 
 loadProviders(join(__dirname, "./providers"));
+enablePublicProviders();
+disableProvider("TorrentProject");
 
 class Torrentsearch extends Command {
   public static description = "search for torrents";
@@ -48,8 +50,6 @@ class Torrentsearch extends Command {
     } catch (err) {
       /*empty*/
     }
-
-    enablePublicProviders();
 
     Object.keys(config).forEach(provider => {
       enableProvider(
