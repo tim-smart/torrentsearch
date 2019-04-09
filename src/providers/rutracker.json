@@ -1,0 +1,28 @@
+{
+  "name": "RUTracker",
+  "baseUrl": "https://rutracker.org",
+  "requireAuthentification": true,
+  "supportCookiesAuthentification": true,
+  "supportCredentialsAuthentification": true,
+  "loginUrl": "/forum/login.php",
+  "loginQueryString": "login=login&login_username={username}&login_password={password}",
+  "searchUrl": "/forum/tracker.php?nm={query}",
+  "categories": {
+    "All": ""
+  },
+  "defaultCategory": "All",
+  "resultsPerPageCount": 50,
+  "itemsSelector": "table#tor-tbl > tbody > tr.hl-tr",
+  "itemSelectors": {
+    "title": "a.tLink@text | trim",
+    "downloaded": "span.med@text | int",
+    "seeds": ".seedmed@text | int",
+    "peers": ".leechmed@text | int",
+    "size": "a.tr-dl@text | trim",
+    "link": "a.tr-dl@href",
+    "desc": "a.tLink@href"
+  },
+  "paginateSelector": "a.pg:contains(След.)@href",
+  "torrentDetailsSelector": "table.attach",
+  "magnetSelector": "a.magnet-link@href"
+}

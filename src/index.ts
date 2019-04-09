@@ -1,10 +1,15 @@
 ///<reference path="torrent-search-api.d.ts"/>
 import { Command, flags } from "@oclif/command";
+import { IConfig } from "@oclif/config";
 import chalk from "chalk";
 import cli from "cli-ux";
+import * as fs from "fs-extra";
 import { join } from "path";
+import * as path from "path";
 import {
+  enableProvider,
   enablePublicProviders,
+  getMagnet,
   loadProviders,
   search,
   Torrent,
@@ -22,7 +27,7 @@ class Torrentsearch extends Command {
     category: flags.enum({
       char: "c",
       default: "All",
-      options: ["All", "Movies", "TV", "Games", "Music"],
+      options: ["All", "Movies", "TV", "Games", "Music", "Applications"],
     }),
 
     limit: flags.integer({
@@ -35,28 +40,54 @@ class Torrentsearch extends Command {
 
   public async run() {
     const { args, flags: parsedFlags } = this.parse(Torrentsearch);
-    enablePublicProviders();
+    let config: { [key: string]: any } = {};
+    try {
+      config = await fs.readJSON(
+        path.join(this.config.configDir, "config.json"),
+      );
+    } catch (err) {
+      /*empty*/
+    }
+
+    // enablePublicProviders();
+
+    Object.keys(config).forEach(provider => {
+      enableProvider(
+        provider,
+        config[provider].username,
+        config[provider].password,
+      );
+    });
+
     const torrents = await search(
       args.query,
       parsedFlags.category,
       parsedFlags.limit!,
     );
-    torrents.forEach(torrent => {
-      this.logTorrent(torrent);
-    });
+    for (const torrent of torrents) {
+      await this.logTorrent(torrent);
+    }
   }
 
-  private logTorrent(torrent: Torrent) {
+  private async logTorrent(torrent: Torrent) {
     this.log(chalk.bold(torrent.title));
     this.log(
       `${chalk.bold.blue(torrent.size)} - ` +
         `${chalk.bold.green("S:")} ${torrent.seeds} - ` +
-        `${chalk.bold.green("P:")} ${torrent.peers} - `,
+        `${chalk.bold.green("P:")} ${torrent.peers} - ` +
+        `${torrent.time}`,
     );
     if (torrent.magnet) {
       cli.url("magnet", torrent.magnet);
+    } else if (torrent.link) {
+      cli.url("link", torrent.link);
     } else {
-      cli.url("link", torrent.desc);
+      const magnet = await getMagnet(torrent);
+      if (magnet) {
+        cli.url("magnet", magnet);
+      } else {
+        cli.url("link", torrent.desc);
+      }
     }
   }
 }
