@@ -123,12 +123,18 @@ class Torrentsearch extends Command {
   }
 
   private torrentRow(torrent: Torrent) {
-    return (
-      `${chalk.yellow(torrent.title)} ` +
-      `${chalk.blue(torrent.size)} ` +
-      `${chalk.green((torrent.seeds || 0).toString())} ` +
-      `${chalk.red((torrent.peers || 0).toString())}`
-    );
+    const parts = [
+      chalk.yellow(torrent.title),
+      chalk.blue(torrent.size),
+      chalk.green((torrent.seeds || 0).toString()),
+      chalk.red((torrent.peers || 0).toString()),
+    ];
+
+    if (torrent.time) {
+      parts.push(torrent.time);
+    }
+
+    return parts.join(" ");
   }
 
   private async selectTorrent(torrents: Torrent[]) {
