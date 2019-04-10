@@ -6,4 +6,8 @@ declare module "torrent-search-api" {
     seeds: number;
     link?: string;
   }
+
+  export interface TorrentProvider {
+    public: boolean;
+  }
 }

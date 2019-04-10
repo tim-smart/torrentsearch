@@ -1,7 +1,7 @@
 {
   "name": "@tim-smart/torrentsearch",
   "description": "Search for torrents",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "author": "Tim Smart @tim-smart",
   "bin": {
     "torrentsearch": "./bin/run"

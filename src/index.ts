@@ -3,24 +3,32 @@ import { Command, flags } from "@oclif/command";
 import chalk from "chalk";
 import * as fs from "fs-extra";
 import * as inquirer from "inquirer";
-import {} from "open";
 import open = require("open");
 import { join } from "path";
 import * as path from "path";
 import {
   disableProvider,
   enableProvider,
-  enablePublicProviders,
   getActiveProviders,
   getMagnet,
+  getProviders,
   loadProviders,
   search,
   Torrent,
 } from "torrent-search-api";
 
 loadProviders(join(__dirname, "./providers"));
-enablePublicProviders();
-disableProvider("TorrentProject");
+
+[
+  "1337x",
+  "ExtraTorrent",
+  "KickassTorrents",
+  "Nyaa",
+  "Rarbg",
+  "ThePirateBay",
+  "Torrent9",
+  "Torrentz2",
+].forEach(p => enableProvider(p));
 
 class Torrentsearch extends Command {
   public static description = "search for torrents";
@@ -75,7 +83,8 @@ class Torrentsearch extends Command {
   }
 
   private async selectProviders() {
-    const providers = getActiveProviders();
+    const providers = getProviders();
+    const activeProviders = getActiveProviders().map(p => p.name);
     const results = await inquirer.prompt<{ providers: string[] }>([
       {
         message: "Select providers",
@@ -83,7 +92,7 @@ class Torrentsearch extends Command {
         type: "checkbox",
 
         choices: providers.map(p => ({
-          checked: true,
+          checked: activeProviders.includes(p.name),
           value: p.name,
         })),
       },
