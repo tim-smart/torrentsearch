@@ -83,23 +83,30 @@ class Torrentsearch extends Command {
   }
 
   private async selectProviders() {
-    const providers = getProviders();
+    const publicProviders = getProviders()
+      .filter(p => p.public)
+      .map(p => p.name);
     const activeProviders = getActiveProviders().map(p => p.name);
-    const results = await inquirer.prompt<{ providers: string[] }>([
-      {
-        message: "Select providers",
-        name: "providers",
-        type: "checkbox",
+    const providers = publicProviders
+      .concat(activeProviders)
+      .filter((p, i, arr) => arr.indexOf(p) === i);
 
-        choices: providers.map(p => ({
-          checked: activeProviders.includes(p.name),
-          value: p.name,
-        })),
-      },
-    ]);
+    const results = await inquirer.prompt<{ providers: string[] }>({
+      message: "Select providers",
+      name: "providers",
+      type: "checkbox",
+
+      choices: providers.map(value => ({
+        checked: activeProviders.includes(value),
+        value,
+      })),
+    });
+    results.providers
+      .filter(p => !activeProviders.includes(p))
+      .forEach(p => enableProvider(p));
     providers
-      .filter(p => !results.providers.includes(p.name))
-      .forEach(p => disableProvider(p.name));
+      .filter(p => !results.providers.includes(p))
+      .forEach(p => disableProvider(p));
   }
 
   private async getQuery(args: any): Promise<string> {
@@ -120,26 +127,28 @@ class Torrentsearch extends Command {
       `${chalk.yellow(torrent.title)} ` +
       `${chalk.blue(torrent.size)} ` +
       `${chalk.green((torrent.seeds || 0).toString())} ` +
-      `${chalk.red((torrent.peers || 0).toString())} ` +
-      `${torrent.time}`
+      `${chalk.red((torrent.peers || 0).toString())}`
     );
   }
 
   private async selectTorrent(torrents: Torrent[]) {
-    const result = await inquirer.prompt<{ torrent: Torrent }>({
-      message: "Select a result",
-      name: "torrent",
-      pageSize: 15,
-      type: "rawlist",
+    for (const [i, torrent] of torrents.entries()) {
+      this.log(
+        `${chalk.magentaBright(`${i + 1}`)}) ${this.torrentRow(torrent)}`,
+      );
+    }
 
-      choices: torrents.map(t => ({
-        name: this.torrentRow(t),
-        value: t,
-      })),
+    const results = await inquirer.prompt<{ index: number }>({
+      message: "Select a torrent",
+      name: "index",
+      type: "number",
+      validate: (n: number) =>
+        n > 0 && n <= torrents.length ? true : "Not a valid option",
     });
+    const selectedTorrent = torrents[results.index - 1];
 
-    const magnet = await getMagnet(result.torrent);
-    await open(magnet || result.torrent.link || result.torrent.desc);
+    const magnet = await getMagnet(selectedTorrent);
+    await open(magnet || selectedTorrent.link || selectedTorrent.desc);
   }
 }
 
