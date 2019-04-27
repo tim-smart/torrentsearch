@@ -1,4 +1,4 @@
-///<reference path="torrent-search-api.d.ts"/>
+///<reference path="typings/torrent-search-api.d.ts"/>
 import { Command, flags } from "@oclif/command";
 import chalk from "chalk";
 import * as fs from "fs-extra";
@@ -16,6 +16,9 @@ import {
   search,
   Torrent,
 } from "torrent-search-api";
+
+const supports = require("supports-hyperlinks");
+const hyperlinker = require("hyperlinker");
 
 loadProviders(join(__dirname, "./providers"));
 
@@ -123,8 +126,16 @@ class Torrentsearch extends Command {
   }
 
   private torrentRow(torrent: Torrent) {
+    let title = chalk.yellow(torrent.title);
+    if (supports.stdout) {
+      title = hyperlinker(
+        title,
+        torrent.magnet || torrent.link || torrent.desc,
+      );
+    }
+
     const parts = [
-      chalk.yellow(torrent.title),
+      title,
       chalk.blue(torrent.size),
       chalk.green((torrent.seeds || 0).toString()),
       chalk.red((torrent.peers || 0).toString()),
